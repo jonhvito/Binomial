@@ -470,5 +470,4 @@ Para dúvidas, sugestões ou problemas:
 
 ---
 
-**Desenvolvido para educar e facilitar o entendimento de probabilidades binomiais**</content>
-<parameter name="filePath">/home/jonh_vito/Área de trabalho/Binomial/README.md
+**Desenvolvido para educar e facilitar o entendimento de probabilidades binomiais**
