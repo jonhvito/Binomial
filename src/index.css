@@ -1,3 +1,98 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Configuração base para temas */
+@layer base {
+  html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
+  }
+  
+  body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  :root {
+    /* Light theme colors */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  }
+
+  .dark {
+    /* Dark theme colors */
+    --bg-primary: #1f2937;
+    --bg-secondary: #111827;
+    --bg-tertiary: #374151;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --border-color: #4b5563;
+    --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+  }
+
+  /* Aplicar cores baseadas no tema */
+  body {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+}
+
+/* Estilos customizados para componentes com tema */
+@layer components {
+  .theme-card {
+    @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700;
+  }
+  
+  .theme-text {
+    @apply text-gray-900 dark:text-gray-100;
+  }
+  
+  .theme-text-secondary {
+    @apply text-gray-600 dark:text-gray-400;
+  }
+  
+  .theme-border {
+    @apply border-gray-200 dark:border-gray-700;
+  }
+  
+  .theme-bg-gradient {
+    @apply bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-blue-900;
+  }
+  
+  .theme-shadow {
+    @apply shadow-lg dark:shadow-2xl;
+  }
+}
+
+/* Estilos para o tutorial interativo */
+.tutorial-highlight {
+  position: relative;
+  z-index: 46 !important;
+  box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.5) !important;
+  border-radius: 8px !important;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px 5px rgba(59, 130, 246, 0.5); 
+  }
+  50% { 
+    box-shadow: 0 0 30px 10px rgba(59, 130, 246, 0.8); 
+  }
+}
+
+/* Transições suaves para mudança de tema */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}

@@ -1,11 +1,13 @@
-import React from 'react';
-import ProbabilityCalculator from './components/ProbabilityCalculator';
+import ProbabilityCalculatorEnhanced from './components/ProbabilityCalculator_Enhanced';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 function App() {
   return (
-    <div className="App">
-      <ProbabilityCalculator />
-    </div>
+    <ThemeProvider>
+      <div className="App">
+        <ProbabilityCalculatorEnhanced />
+      </div>
+    </ThemeProvider>
   );
 }
 

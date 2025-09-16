@@ -6,45 +6,103 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.4.1-38B2AC.svg)](https://tailwindcss.com/)
 [![Chart.js](https://img.shields.io/badge/Chart.js-4.5.0-orange.svg)](https://www.chartjs.org/)
 
-Uma calculadora interativa e educacional para probabilidades binomiais, desenvolvida com React, TypeScript e Vite. Inclui cálculos exatos, aproximações Poisson e Normal, visualizações gráficas e conteúdo educacional detalhado.
+Uma calculadora interativa e educacional para probabilidades binomiais, desenvolvida com React, TypeScript e Vite. Inclui cálculos exatos, aproximações Poisson e Normal, visualizações gráficas, tutorial interativo, glossário completo e conteúdo educacional detalhado com tema adaptável.
+
+## 🚀 Demonstração Online
+
+**Acesse a aplicação em funcionamento:** [https://jonhvito2.github.io/Binomial-2/](https://jonhvito2.github.io/Binomial-2/)
+
+*Teste todas as funcionalidades diretamente no seu navegador!*
 
 ## Demonstração
 
 ### Interface Principal
 ![Interface Principal](./src/media/image1.png)
 
-### Funcionalidades em Ação
+### Funcionalidades em Ação  
 ![Funcionalidades em Ação](./src/media/image2.png)
 
-*Screenshots da aplicação em funcionamento*
+### Tutorial Interativo e Recursos Avançados
+![Tutorial Interativo](./src/media/image3.png)
+
+### Visualizações Avançadas
+![Tema Escuro](./src/media/image4.png)
+
+*Screenshots da aplicação em funcionamento com tema claro e escuro, mostrando todas as funcionalidades*
+
+### Recursos Disponíveis
+- 🎯 **9 Cenários Práticos**: Desde controle de qualidade até análises esportivas
+- 📊 **Visualizações Múltiplas**: Gráficos interativos e comparativos
+- 🎓 **Tutorial Guiado**: Tour completo pelas funcionalidades
+- 📖 **Glossário Completo**: Definições de todos os termos estatísticos
+- 🌙 **Tema Adaptável**: Interface clara e escura para conforto visual
+- 📱 **Design Responsivo**: Funcional em desktop, tablet e mobile
 
 ## Funcionalidades Principais
 
 ### Cálculos Probabilísticos
 - **Cálculo Exato**: Probabilidade binomial precisa usando algoritmos otimizados
-- **Aproximação Poisson**: Para eventos raros (λ = n×p pequeno)
+- **Aproximação Poisson**: Para eventos raros (λ = n×p pequeno)  
 - **Aproximação Normal**: Para amostras grandes com correção de continuidade
 - **Comparação de Métodos**: Visualize diferenças entre exato vs. aproximado
+- **Análise de Erros**: Cálculo automático de erros relativos entre aproximações
 
 ### Visualizações Interativas
 - **Gráfico de Distribuição**: Histograma da distribuição binomial
+- **Gráficos Avançados**: Comparações visuais entre distribuições
 - **Destaque Visual**: Barras coloridas para P(X > k) vs P(X ≤ k)
 - **Tooltips Informativos**: Probabilidades precisas ao passar o mouse
 - **Responsividade**: Interface adaptável para desktop e mobile
+- **Tema Dark/Light**: Alternância completa entre temas
 
 ### Conteúdo Educacional
+- **Tutorial Interativo**: Tour guiado pelas funcionalidades principais
+- **Glossário Completo**: Definições detalhadas de termos estatísticos
+- **Explicação Passo-a-Passo**: Detalhamento dos cálculos realizados
 - **Modais Explicativos**: Conceitos detalhados sobre parâmetros e distribuições
-- **Cenários Práticos**: Exemplos reais de aplicação
-- **Dicas Inteligentes**: Sugestões contextuais baseadas nos parâmetros
 - **História da Estatística**: Timeline do desenvolvimento das distribuições
-- **Cálculo Manual**: Passo-a-passo educacional
+- **Cálculo Manual**: Passo-a-passo educacional com fórmulas
+- **FAQ Interativo**: Respostas para dúvidas comuns
 
-### Validação e Segurança
-- **Validação de Entrada**: Mensagens didáticas para parâmetros inválidos
-- **Limites Numéricos**: Proteção contra overflow/underflow
-- **Performance Otimizada**: Algoritmos eficientes para grandes n
+### Cenários Práticos
+Cenários pré-configurados com exemplos reais:
+- **Controle de Qualidade**: Análise de peças defeituosas
+- **Futebol**: Probabilidade de gols em chutes
+- **Exames**: Taxa de aprovação de estudantes
+- **Bugs em Software**: Defeitos em linhas de código
+- **Epidemiologia**: Casos positivos em testes médicos
+- **Eventos Raros**: Probabilidades baixas em grandes amostras
+- **Arremessos Livres**: Performance esportiva
+- **Voos Pontuais**: Análise de pontualidade
+- **Loteria**: Probabilidades em jogos de azar
+
+### Dicas Inteligentes
+- **Recomendações Contextuais**: Sugestões baseadas nos parâmetros inseridos
+- **Validação Condicional**: Indicação das melhores aproximações para cada cenário
+- **Interpretação de Resultados**: Explicações sobre a significância dos valores
+- **Alertas Educativos**: Avisos sobre condições de aplicabilidade
+
+### Interface e Usabilidade
+- **Controles Intuitivos**: Sliders sincronizados com campos numéricos
+- **Validação em Tempo Real**: Feedback imediato sobre parâmetros
+- **Design Responsivo**: Funcionalidade completa em dispositivos móveis
+- **Acessibilidade**: Suporte para diferentes dispositivos e necessidades
+- **Performance Otimizada**: Algoritmos eficientes para cálculos complexos
 
 ## Como Usar
+
+### Versões Disponíveis
+
+#### **ProbabilityCalculator** (Versão Padrão)
+- Interface limpa e focada nos cálculos essenciais
+- Ideal para uso rápido e demonstrações básicas
+- Todos os recursos matemáticos fundamentais
+
+#### **ProbabilityCalculator_Enhanced** (Versão Avançada)
+- Interface completa com recursos educacionais expandidos
+- Tutorial interativo, glossário e explicações detalhadas
+- Tema dark/light, gráficos comparativos avançados
+- Experiência didática completa
 
 ### Pré-requisitos
 - Node.js 18+
@@ -77,18 +135,31 @@ npm run preview
 
 #### 2. Cenários Práticos
 Escolha entre cenários pré-configurados:
-- **Controle de Qualidade**: Peças defeituosas
-- **Futebol**: Chutes a gol
-- **Exames**: Aprovação de alunos
+- **Controle de Qualidade**: Peças defeituosas em produção
+- **Futebol**: Chutes a gol com probabilidade de sucesso
+- **Exames**: Aprovação de alunos em testes
 - **Bugs em Software**: Defeitos em código
-- **Epidemiologia**: Casos positivos
-- **Eventos Raros**: Probabilidades baixas
+- **Epidemiologia**: Casos positivos em testes médicos
+- **Eventos Raros**: Probabilidades baixas em grandes amostras
+- **Arremessos Livres**: Performance esportiva
+- **Voos Pontuais**: Análise de pontualidade
+- **Loteria**: Probabilidades em jogos de azar
 
 #### 3. Resultados
 - **Probabilidade Exata**: Cálculo binomial preciso
 - **Aproximações**: Comparação com Poisson e Normal
 - **Estatísticas**: Média, desvio padrão e erros relativos
 - **Distribuição**: Gráfico interativo da distribuição
+- **Validação Automática**: Indicação das melhores aproximações
+- **Dicas Contextuais**: Interpretação inteligente dos resultados
+
+#### 4. Recursos Avançados
+- **Tutorial Interativo**: Tour guiado pelas funcionalidades
+- **Glossário**: Definições completas de termos estatísticos
+- **Explicação Detalhada**: Passo-a-passo dos cálculos
+- **Tema Dark/Light**: Alternância de aparência
+- **Gráficos Comparativos**: Visualizações avançadas das distribuições
+- **Interface Responsiva**: Experiência otimizada para mobile e desktop
 
 ## Conceitos Matemáticos
 
@@ -130,27 +201,44 @@ binomial-calculator/
 │   └── vite.svg
 ├── src/
 │   ├── components/
-│   │   ├── ProbabilityCalculator.tsx    # Componente principal (149 linhas)
-│   │   └── probability/                 # Componentes modulares
-│   │       ├── ApproximationOptions.tsx # Opções de aproximações
-│   │       ├── DistributionChart.tsx    # Gráfico da distribuição
-│   │       ├── ExplanationModal.tsx     # Modal de explicações
-│   │       ├── ParameterControls.tsx    # Controles de parâmetros
-│   │       ├── PresetButtons.tsx        # Botões de cenários
-│   │       └── ResultsDisplay.tsx       # Exibição de resultados
-│   ├── hooks/                           # Hooks customizados
-│   │   ├── useModalState.ts            # Gerenciamento de modais
-│   │   └── useProbabilityCalculator.ts # Lógica principal de cálculos
-│   ├── utils/                           # Utilitários
-│   │   ├── modalContent.tsx            # Conteúdo dos modais
-│   │   ├── presets.ts                  # Cenários pré-definidos
-│   │   ├── probabilityCalculations.ts  # Funções matemáticas
-│   │   ├── smartTips.ts                # Lógica de dicas
-│   │   └── validation.ts               # Validação de entrada
-│   ├── App.tsx                         # Aplicação principal
-│   ├── index.css                       # Estilos globais
-│   ├── main.tsx                        # Ponto de entrada
-│   └── vite-env.d.ts                   # Tipos Vite
+│   │   ├── ProbabilityCalculator.tsx         # Componente principal (149 linhas)
+│   │   ├── ProbabilityCalculator_Enhanced.tsx # Versão avançada com recursos adicionais
+│   │   ├── ui/
+│   │   │   └── ThemeToggle.tsx               # Toggle entre temas dark/light
+│   │   └── probability/                      # Componentes modulares
+│   │       ├── AdditionalCharts.tsx          # Gráficos comparativos avançados
+│   │       ├── ApproximationOptions.tsx      # Opções de aproximações
+│   │       ├── BinomialExplainer.tsx         # Explicação detalhada dos cálculos
+│   │       ├── ChartLegend.tsx              # Legenda dos gráficos
+│   │       ├── DistributionChart.tsx         # Gráfico da distribuição
+│   │       ├── ExplanationModal.tsx          # Modal de explicações
+│   │       ├── Glossary.tsx                 # Glossário de termos
+│   │       ├── InteractiveTutorial.tsx      # Tutorial guiado
+│   │       ├── ParameterControls.tsx        # Controles de parâmetros
+│   │       ├── PresetButtons.tsx            # Botões de cenários
+│   │       └── ResultsDisplay.tsx           # Exibição de resultados
+│   ├── contexts/
+│   │   └── ThemeContext.tsx                 # Contexto global de tema
+│   ├── hooks/                               # Hooks customizados
+│   │   ├── useModalState.ts                 # Gerenciamento de modais
+│   │   ├── useProbabilityCalculator.ts      # Lógica principal de cálculos
+│   │   ├── useTheme.ts                      # Gerenciamento de tema
+│   │   └── useTutorial.ts                   # Controle do tutorial interativo
+│   ├── utils/                               # Utilitários
+│   │   ├── modalContent.tsx                 # Conteúdo dos modais
+│   │   ├── presets.ts                       # Cenários pré-definidos
+│   │   ├── probabilityCalculations.ts       # Funções matemáticas
+│   │   ├── smartTips.ts                     # Lógica de dicas
+│   │   └── validation.ts                    # Validação de entrada
+│   ├── media/                               # Recursos visuais
+│   │   ├── image1.png
+│   │   └── image2.png
+│   ├── App.tsx                              # Aplicação principal
+│   ├── index.css                            # Estilos globais
+│   ├── main.tsx                             # Ponto de entrada
+│   └── vite-env.d.ts                        # Tipos Vite
+├── docs/                                    # Build de produção
+│   └── ...
 ├── package.json
 ├── tsconfig.json
 ├── tailwind.config.js
@@ -168,6 +256,8 @@ binomial-calculator/
 #### Hooks Customizados
 - **`useProbabilityCalculator`**: Gerencia estado e cálculos probabilísticos
 - **`useModalState`**: Controla abertura/fechamento dos modais explicativos
+- **`useTheme`**: Gerenciamento do tema dark/light da aplicação
+- **`useTutorial`**: Controle do tutorial interativo e tour guiado
 
 #### **Componentes de UI**
 - **`ParameterControls`**: Controles deslizantes para n, p, k
@@ -176,6 +266,14 @@ binomial-calculator/
 - **`ResultsDisplay`**: Exibição dos resultados calculados
 - **`DistributionChart`**: Gráfico interativo da distribuição
 - **`ExplanationModal`**: Modal com conteúdo educacional
+- **`ThemeToggle`**: Alternância entre tema claro e escuro
+
+#### Componentes Avançados
+- **`BinomialExplainer`**: Explicação passo-a-passo dos cálculos
+- **`InteractiveTutorial`**: Tour guiado pelas funcionalidades
+- **`Glossary`**: Glossário completo de termos estatísticos
+- **`AdditionalCharts`**: Visualizações comparativas avançadas
+- **`ChartLegend`**: Legendas detalhadas para os gráficos
 
 #### Utilitários
 - **`probabilityCalculations`**: Todas as funções matemáticas (245 linhas)
@@ -298,7 +396,9 @@ DistributionChart ← modalContent.tsx ← ExplanationModal
 
 ### UI/UX
 - **Lucide React**: Ícones modernos e consistentes
-- **Responsive Design**: Interface adaptável
+- **Responsive Design**: Interface adaptável para todos os dispositivos
+- **Tema Dinâmico**: Sistema completo de dark/light mode
+- **Acessibilidade**: Suporte para diferentes necessidades de usuário
 
 ### Desenvolvimento
 - **ESLint**: Linting e qualidade de código
@@ -323,12 +423,20 @@ p = 0.002  // 0.2% de taxa de infecção
 k = 2      // P(X > 2) - mais de 2 casos positivos
 ```
 
-### 3. Desenvolvimento de Software
+### 4. Arremessos Livres
 ```typescript
-// Exemplo: Bugs em código
-n = 1000   // 1000 linhas de código
-p = 0.001  // 0.1% de chance de bug por linha
-k = 3      // P(X > 3) - mais de 3 bugs
+// Exemplo: Basquete - performance do jogador
+n = 30     // 30 arremessos livres
+p = 0.1    // 10% de chance de errar
+k = 5      // P(X > 5) - mais de 5 erros
+```
+
+### 5. Voos Pontuais
+```typescript
+// Exemplo: Análise de pontualidade aérea
+n = 100    // 100 voos
+p = 0.95   // 95% de pontualidade
+k = 90     // P(X > 90) - mais de 90 voos no horário
 ```
 
 ## Scripts Disponíveis
@@ -375,9 +483,11 @@ Contribuições são bem-vindas! Esta aplicação segue uma arquitetura modular 
 - Inclua tipos TypeScript
 
 #### Conteúdo Educacional
-- Atualize `src/utils/modalContent.tsx`
+- Atualize `src/utils/modalContent.tsx` para novos modais explicativos
 - Adicione novos cenários em `src/utils/presets.ts`
 - Melhore dicas em `src/utils/smartTips.ts`
+- Expanda o glossário em `src/components/probability/Glossary.tsx`
+- Aprimore o tutorial em `src/components/probability/InteractiveTutorial.tsx`
 
 ### Diretrizes de Desenvolvimento
 

@@ -11,6 +11,7 @@ import {
 } from 'chart.js';
 import { BarChart3 } from 'lucide-react';
 import type { ChartOptions, ChartData } from 'chart.js';
+import ChartLegend from './ChartLegend';
 
 ChartJS.register(
   CategoryScale,
@@ -36,17 +37,29 @@ const DistributionChart: React.FC<DistributionChartProps> = ({
   p,
   k,
 }) => {
+  // Detectar tema atual
+  const isDarkMode = document.documentElement.classList.contains('dark');
+  
   const chartOptions: ChartOptions<'bar'> = {
     responsive: true,
     plugins: {
       legend: {
         position: 'top' as const,
+        labels: {
+          color: isDarkMode ? '#e5e7eb' : '#374151',
+        },
       },
       title: {
         display: true,
         text: `Distribuição Binomial (n=${n}, p=${p.toFixed(3)}) — destaque: x > ${k}`,
+        color: isDarkMode ? '#f3f4f6' : '#1f2937',
       },
       tooltip: {
+        backgroundColor: isDarkMode ? '#374151' : '#ffffff',
+        titleColor: isDarkMode ? '#f3f4f6' : '#1f2937',
+        bodyColor: isDarkMode ? '#e5e7eb' : '#374151',
+        borderColor: isDarkMode ? '#6b7280' : '#e5e7eb',
+        borderWidth: 1,
         callbacks: {
           label: function(context) {
             const prob = context.parsed.y;
@@ -63,49 +76,54 @@ const DistributionChart: React.FC<DistributionChartProps> = ({
         title: {
           display: true,
           text: 'Probabilidade',
+          color: isDarkMode ? '#e5e7eb' : '#374151',
+        },
+        ticks: {
+          color: isDarkMode ? '#d1d5db' : '#6b7280',
+        },
+        grid: {
+          color: isDarkMode ? '#4b5563' : '#e5e7eb',
         },
       },
       x: {
         title: {
           display: true,
           text: 'Valor (x)',
+          color: isDarkMode ? '#e5e7eb' : '#374151',
+        },
+        ticks: {
+          color: isDarkMode ? '#d1d5db' : '#6b7280',
+        },
+        grid: {
+          color: isDarkMode ? '#4b5563' : '#e5e7eb',
         },
       },
     },
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-6">
+    <div className="theme-card rounded-xl theme-shadow p-6">
       <div className="flex items-center gap-2 mb-6">
-        <BarChart3 className="w-5 h-5 text-blue-600" />
-        <h2 className="text-xl font-semibold text-gray-900">Distribuição</h2>
+        <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+        <h2 className="text-xl font-semibold theme-text">Distribuição</h2>
       </div>
 
       {validInput && chartData ? (
         <div className="h-80">
           <Bar data={chartData} options={chartOptions} />
           {Math.min(n, k + 20, 300) < Math.min(n, k + 20) && (
-            <p className="mt-2 text-xs text-gray-500">
+            <p className="mt-2 text-xs theme-text-secondary">
               Exibindo apenas os primeiros 300 valores de x para desempenho.
             </p>
           )}
         </div>
       ) : (
-        <div className="h-80 flex items-center justify-center text-gray-500">
+        <div className="h-80 flex items-center justify-center theme-text-secondary">
           <p>Aguardando parâmetros válidos...</p>
         </div>
       )}
 
-      <div className="mt-4 flex items-center gap-4 text-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-blue-500 rounded"></div>
-          <span className="text-gray-600">barras: x ≤ k</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-4 bg-orange-500 rounded"></div>
-          <span className="text-gray-600">barras: x &gt; k</span>
-        </div>
-      </div>
+      <ChartLegend k={k} />
     </div>
   );
 };
