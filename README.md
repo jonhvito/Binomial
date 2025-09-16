@@ -10,7 +10,7 @@ Uma calculadora interativa e educacional para probabilidades binomiais, desenvol
 
 ## 🚀 Demonstração Online
 
-**Acesse a aplicação em funcionamento:** [https://jonhvito2.github.io/Binomial-2/](https://jonhvito.github.io/Binomial/)
+**Acesse a aplicação em funcionamento:** [https://jonhvito.github.io/Binomial](https://jonhvito.github.io/Binomial)
 
 *Teste todas as funcionalidades diretamente no seu navegador!*
 
