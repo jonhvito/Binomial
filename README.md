@@ -335,8 +335,8 @@ Este projeto está licenciado sob a licença MIT. Consulte o arquivo LICENSE par
 
 Para dúvidas, sugestões ou problemas relacionados ao projeto:
 
-- **GitHub Issues**: [Reportar problemas](https://github.com/jonhvito2/Binomial-2/issues)
-- **GitHub Discussions**: [Discussões gerais](https://github.com/jonhvito2/Binomial-2/discussions)
+- **GitHub Issues**: [Reportar problemas](https://github.com/jonhvito/Binomial/issues)
+- **GitHub Discussions**: [Discussões gerais](https://github.com/jonhvito/Binomial/discussions)
 
 - **Email**: victorjoao8817@gmail.com
 
