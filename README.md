@@ -10,7 +10,7 @@ Uma aplicação web educacional para cálculo de probabilidades binomiais, desen
 
 ## Demonstração Online
 
-**Acesse:** [https://jonhvito2.github.io/Binomial-2/](https://jonhvito2.github.io/Binomial-2/)
+**Acesse:** [https://jonhvito.github.io/Binomial/](https://jonhvito.github.io/Binomial/)
 
 ## Capturas de Tela
 
