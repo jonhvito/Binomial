@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Play, Pause, RotateCcw, BookOpen, Calculator, Lightbulb } from 'lucide-react';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
+import { logBinomialProb, calculateBinomial } from '../../utils/probabilityCalculations';
 
 interface BinomialExplainerProps {
   n: number;
@@ -12,19 +15,39 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
   const [isAnimating, setIsAnimating] = useState(false);
   const [showFormula, setShowFormula] = useState(false);
 
-  // Cálculos para a explicação
-  const factorial = (num: number): number => {
-    if (num <= 1) return 1;
-    return num * factorial(num - 1);
-  };
-
-  const combination = (n: number, k: number): number => {
-    return factorial(n) / (factorial(k) * factorial(n - k));
-  };
-
+  // Cálculos para a explicação usando logaritmos para evitar overflow
   const binomialProbExact = (n: number, k: number, p: number): number => {
-    const coeff = combination(n, k);
-    return coeff * Math.pow(p, k) * Math.pow(1 - p, n - k);
+    if (k < 0 || k > n) return 0;
+    if (p === 0) return k === 0 ? 1 : 0;
+    if (p === 1) return k === n ? 1 : 0;
+    
+    // Usa logaritmos para cálculos estáveis
+    const logProb = logBinomialProb(n, k, p);
+    if (!isFinite(logProb)) return 0;
+    
+    const result = Math.exp(logProb);
+    return isFinite(result) ? result : 0;
+  };
+
+  // Função auxiliar para calcular P(X > k) de forma estável
+  const calculateTailProbability = (n: number, p: number, k: number): number => {
+    if (k >= n) return 0;
+    
+    let totalProb = 0;
+    const maxTerms = Math.min(n - k, 50); // Limita para evitar cálculos desnecessários
+    
+    for (let i = 1; i <= maxTerms; i++) {
+      const prob = binomialProbExact(n, k + i, p);
+      if (isNaN(prob) || !isFinite(prob)) break;
+      totalProb += prob;
+    }
+    
+    // Se temos muitos termos, usa a função otimizada de probabilityCalculations
+    if (n - k > 50) {
+      return calculateBinomial(n, p, k);
+    }
+    
+    return totalProb;
   };
 
   const steps = [
@@ -40,7 +63,7 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
     },
     {
       title: "🔢 Fórmula Binomial",
-      content: `P(X = x) = C(${n},x) × ${p.toFixed(3)}^x × ${(1-p).toFixed(3)}^(${n}-x)`,
+      content: `A fórmula da distribuição binomial nos permite calcular a probabilidade exata:`,
       visual: "formula"
     },
     {
@@ -50,10 +73,11 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
     },
     {
       title: "✅ Resultado Final",
-      content: `A probabilidade de obter mais de ${k} sucessos em ${n} tentativas é ${(
-        Array.from({ length: n - k }, (_, i) => binomialProbExact(n, k + 1 + i, p))
-          .reduce((sum, prob) => sum + prob, 0) * 100
-      ).toFixed(2)}%.`,
+      content: (() => {
+        const result = calculateTailProbability(n, p, k);
+        const percentage = (result * 100).toFixed(4);
+        return `A probabilidade de obter mais de ${k} sucessos em ${n} tentativas é ${percentage}%.`;
+      })(),
       visual: "result"
     }
   ];
@@ -157,15 +181,16 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
               🔢 Componentes da Fórmula
             </h4>
             <div className="text-center">
-              <div className="text-lg font-mono theme-card p-3 rounded border">
-                P(X = x) = <span className="text-blue-600 dark:text-blue-400">C(n,x)</span> × 
-                <span className="text-green-600 dark:text-green-400"> p^x</span> × 
-                <span className="text-red-600 dark:text-red-400"> (1-p)^(n-x)</span>
+              <div className="theme-card p-4 rounded border mb-3">
+                <BlockMath math={`P(X = x) = \\binom{${n}}{x} \\cdot ${p.toFixed(3)}^x \\cdot ${(1-p).toFixed(3)}^{${n}-x}`} />
               </div>
               <div className="mt-3 text-sm text-purple-700 dark:text-purple-300 space-y-1">
-                <p><span className="text-blue-600 dark:text-blue-400">C(n,x)</span> = Combinações (maneiras de escolher x sucessos)</p>
-                <p><span className="text-green-600 dark:text-green-400">p^x</span> = Probabilidade dos x sucessos</p>
-                <p><span className="text-red-600 dark:text-red-400">(1-p)^(n-x)</span> = Probabilidade das (n-x) falhas</p>
+                <p><span className="text-blue-600 dark:text-blue-400">
+                  <InlineMath math="\\binom{n}{x}" /></span> = Combinações (maneiras de escolher x sucessos)</p>
+                <p><span className="text-green-600 dark:text-green-400">
+                  <InlineMath math="p^x" /></span> = Probabilidade dos x sucessos</p>
+                <p><span className="text-red-600 dark:text-red-400">
+                  <InlineMath math="(1-p)^{n-x}" /></span> = Probabilidade das (n-x) falhas</p>
               </div>
             </div>
           </div>
@@ -173,28 +198,31 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
 
       case "calculation": {
         const exampleValues = Array.from({ length: Math.min(n - k, 5) }, (_, i) => k + 1 + i);
+        const tailProbability = calculateTailProbability(n, p, k);
+        
         return (
           <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-700">
             <h4 className="font-semibold text-orange-900 dark:text-orange-100 mb-3">
               📈 Cálculos Específicos
             </h4>
             <div className="space-y-2">
-              {exampleValues.map((x) => (
-                <div key={x} className="flex justify-between items-center text-sm">
-                  <span className="font-mono theme-text">P(X = {x})</span>
-                  <span className="text-orange-700 dark:text-orange-300">
-                    {binomialProbExact(n, x, p).toFixed(6)}
-                  </span>
-                </div>
-              ))}
+              {exampleValues.map((x) => {
+                const prob = binomialProbExact(n, x, p);
+                return (
+                  <div key={x} className="flex justify-between items-center text-sm">
+                    <span className="font-mono theme-text">P(X = {x})</span>
+                    <span className="text-orange-700 dark:text-orange-300">
+                      {isFinite(prob) ? prob.toExponential(3) : '≈ 0'}
+                    </span>
+                  </div>
+                );
+              })}
               {n - k > 5 && <div className="text-center theme-text-secondary">...</div>}
               <div className="border-t border-orange-300 dark:border-orange-600 pt-2 font-bold">
                 <div className="flex justify-between items-center">
                   <span className="theme-text">Soma Total:</span>
                   <span className="text-orange-800 dark:text-orange-200">
-                    {Array.from({ length: n - k }, (_, i) => binomialProbExact(n, k + 1 + i, p))
-                      .reduce((sum, prob) => sum + prob, 0)
-                      .toFixed(6)}
+                    {isFinite(tailProbability) ? tailProbability.toExponential(3) : '≈ 0'}
                   </span>
                 </div>
               </div>
@@ -204,8 +232,7 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
       }
 
       case "result": {
-        const finalProbability = Array.from({ length: n - k }, (_, i) => binomialProbExact(n, k + 1 + i, p))
-          .reduce((sum, prob) => sum + prob, 0);
+        const finalProbability = calculateTailProbability(n, p, k);
         return (
           <div className="bg-emerald-50 dark:bg-emerald-900/20 p-4 rounded-lg border border-emerald-200 dark:border-emerald-700">
             <h4 className="font-semibold text-emerald-900 dark:text-emerald-100 mb-3">
@@ -213,17 +240,50 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
             </h4>
             <div className="text-center">
               <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
-                {(finalProbability * 100).toFixed(2)}%
+                {isFinite(finalProbability) ? (finalProbability * 100).toFixed(4) : '≈ 0.0000'}%
               </div>
               <p className="text-sm text-emerald-700 dark:text-emerald-300">
                 Probabilidade de obter mais de {k} sucessos em {n} tentativas
               </p>
               <div className="mt-4 p-3 bg-white dark:bg-gray-800 rounded border">
-                <p className="text-xs font-medium theme-text mb-2">Interpretação:</p>
-                <p className="text-xs theme-text-secondary">
-                  Em média, em {Math.round(100 / (finalProbability * 100))} experimentos deste tipo, 
-                  esperamos que {Math.round(finalProbability * 100)} resultem em mais de {k} sucessos.
-                </p>
+                <p className="text-xs font-medium theme-text mb-2">💡 Interpretação Prática:</p>
+                <div className="space-y-2 text-xs theme-text-secondary">
+                  {finalProbability > 0.001 ? (
+                    <div className="space-y-1">
+                      <p>
+                        <strong>Se você repetir este experimento:</strong>
+                      </p>
+                      <p>
+                        • Em <strong>{n} tentativas</strong> com probabilidade <strong>{(p * 100).toFixed(2)}%</strong> cada
+                      </p>
+                      <p>
+                        • Há <strong>{(finalProbability * 100).toFixed(4)}%</strong> de chance de obter <strong>mais de {k} sucessos</strong>
+                      </p>
+                      <p className="pt-1 border-t border-gray-200 dark:border-gray-600">
+                        <strong>Na prática:</strong> Se você fizer este experimento <strong>100 vezes</strong>, 
+                        espera obter mais de {k} sucessos em aproximadamente <strong>{Math.round(finalProbability * 100)} dessas 100 repetições</strong>.
+                      </p>
+                      {finalProbability > 0.5 && (
+                        <p className="text-orange-600 dark:text-orange-400 text-xs">
+                          ⚡ <em>Este resultado é bastante provável de acontecer!</em>
+                        </p>
+                      )}
+                      {finalProbability < 0.05 && finalProbability > 0.001 && (
+                        <p className="text-blue-600 dark:text-blue-400 text-xs">
+                          🔍 <em>Este é um evento raro, mas não impossível.</em>
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <p><strong>Este é um evento extremamente raro!</strong></p>
+                      <p>A probabilidade é menor que 0.1% - quase impossível de acontecer na prática.</p>
+                      <p className="text-red-600 dark:text-red-400 text-xs mt-1">
+                        ⚠️ <em>Você precisaria repetir o experimento milhares de vezes para ver este resultado.</em>
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -262,8 +322,8 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
       {showFormula && (
         <div className="mb-6 p-4 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg">
           <h3 className="font-semibold text-indigo-900 dark:text-indigo-100 mb-2">📚 Fórmula da Distribuição Binomial:</h3>
-          <div className="text-center text-lg font-mono theme-card p-3 rounded border mb-3">
-            P(X = k) = C(n,k) × p^k × (1-p)^(n-k)
+          <div className="text-center theme-card p-3 rounded border mb-3">
+            <BlockMath math="P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}" />
           </div>
           <div className="grid md:grid-cols-2 gap-4 text-sm text-indigo-800 dark:text-indigo-200">
             <div>
@@ -272,7 +332,7 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
             </div>
             <div>
               <p><strong>p:</strong> probabilidade de sucesso ({p.toFixed(3)})</p>
-              <p><strong>C(n,k):</strong> combinações de n, k a k</p>
+              <p><strong><InlineMath math="\binom{n}{k}" />:</strong> combinações de n, k a k</p>
             </div>
           </div>
         </div>
@@ -352,12 +412,31 @@ const BinomialExplainer: React.FC<BinomialExplainerProps> = ({ n, p, k }) => {
         <div className="flex items-start gap-2">
           <Lightbulb className="w-4 h-4 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
           <div>
-            <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">💡 Dica Educacional</h4>
-            <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              A distribuição binomial é usada quando temos um número fixo de tentativas independentes, 
-              cada uma com a mesma probabilidade de sucesso. É muito útil em controle de qualidade, 
-              pesquisas de opinião e análises de confiabilidade.
-            </p>
+            <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-1">💡 Contexto do Seu Problema</h4>
+            <div className="text-sm text-yellow-800 dark:text-yellow-200 space-y-1">
+              <p>
+                <strong>Seu cenário:</strong> {n} tentativas com {(p * 100).toFixed(1)}% de chance de sucesso cada.
+              </p>
+              <p>
+                <strong>Pergunta:</strong> Qual a probabilidade de obter <em>mais de {k}</em> sucessos?
+              </p>
+              <p className="pt-2 border-t border-yellow-300 dark:border-yellow-600">
+                <strong>Aplicações similares:</strong> Controle de qualidade, pesquisas de opinião, 
+                análises médicas, testes A/B, e qualquer situação com tentativas independentes.
+              </p>
+              {p < 0.1 && n > 20 && (
+                <p className="text-blue-700 dark:text-blue-300">
+                  ⚡ <strong>Dica:</strong> Com p baixo ({(p * 100).toFixed(1)}%) e n alto ({n}), 
+                  considere usar a aproximação de Poisson para cálculos mais rápidos!
+                </p>
+              )}
+              {n * p > 5 && n * (1-p) > 5 && (
+                <p className="text-purple-700 dark:text-purple-300">
+                  ⚡ <strong>Dica:</strong> Com np={(n*p).toFixed(1)} e n(1-p)={(n*(1-p)).toFixed(1)}, ambos {'>'} 5, 
+                  a aproximação Normal também funciona bem!
+                </p>
+              )}
+            </div>
           </div>
         </div>
       </div>

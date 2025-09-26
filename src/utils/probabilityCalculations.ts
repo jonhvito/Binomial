@@ -8,7 +8,8 @@ export interface CalculationResult {
   normal: number;
   poissonError: number;
   normalError: number;
-  normalValid: boolean;
+  normalValid: boolean; // Se é recomendado (np >= 10 e n(1-p) >= 10)
+  normalCalculable: boolean; // Se é calculável (np >= 5 e n(1-p) >= 5)
   mean: number;
   stdDev: number;
 }
@@ -68,49 +69,26 @@ export const calculateBinomial = (n: number, p: number, k: number): number => {
   if (p === 1) return k < n ? 1 : 0;
 
   const q = 1 - p;
-  const mean = n * p;
-
-  // Se k < média, soma P(X ≤ k) e subtrai de 1 (mais eficiente para caudas esquerda)
-  if (k < mean) {
-    let px = Math.exp(n * Math.log(q)); // P(X=0)
-    let cum = px;
-    const ratio = p / q;
-    for (let i = 1; i <= k; i++) {
-      px *= ((n - i + 1) / i) * ratio;
-      cum += px;
-      if (!isFinite(px)) break;
-    }
-    return Math.max(0, 1 - cum);
-  } else {
-    // Se k ≥ média, soma diretamente P(X ≥ k+1) (mais eficiente para caudas direita)
-    // Primeiro calcula P(X=k) de forma estável
-    let px = Math.exp(n * Math.log(q)); // P(X=0)
-    let pk = px; // P(X=k) será calculado
-    const ratio = p / q;
-    for (let i = 1; i <= k; i++) {
-      px *= ((n - i + 1) / i) * ratio;
-      if (i === k) pk = px; // Salva P(X=k)
-      if (!isFinite(px)) break;
-    }
-
-    // Agora soma P(X ≥ k+1) = P(X=k+1) + P(X=k+2) + ... + P(X=n)
-    if (k === n) return 0; // redundante, mas explícito
-    let tail = 0;
-    px = pk * ((n - k) / (k + 1)) * ratio; // P(X=k+1)
-    for (let i = k + 1; i <= n; i++) {
-      tail += px;
-      px *= ((n - i) / (i + 1)) * ratio; // Próxima probabilidade
-      if (!isFinite(px) || isNaN(px)) break;
-    }
-    return Math.max(0, tail);
+  
+  // Sempre usa o método mais estável: soma P(X ≤ k) e subtrai de 1
+  let px = Math.exp(n * Math.log(q)); // P(X=0) = (1-p)^n
+  let cum = px;
+  const ratio = p / q;
+  
+  for (let i = 1; i <= k; i++) {
+    px *= ((n - i + 1) / i) * ratio; // P(X=i) = P(X=i-1) * ((n-i+1)/i) * (p/(1-p))
+    cum += px;
+    if (!isFinite(px)) break;
   }
+  
+  return Math.max(0, 1 - cum);
 };
 
 /**
  * Calcula a aproximação Poisson para P(X > k)
  *
  * A distribuição Poisson é uma boa aproximação quando:
- * - n é grande
+  * - n é grande
  * - p é pequeno
  * - λ = n*p é pequeno (geralmente λ < 10)
  *
@@ -170,18 +148,26 @@ export const normalTail = (z: number): number => {
  * Parâmetros: μ = n*p, σ = √[n*p*(1-p)]
  * Correção de continuidade: P(X > k) ≈ P(Z > (k + 0.5 - μ)/σ), z = (k + 0.5 - μ)/σ
  */
-export const calculateNormal = (n: number, p: number, k: number): { value: number; valid: boolean } => {
+export const calculateNormal = (n: number, p: number, k: number): { value: number; valid: boolean; calculable: boolean } => {
   const mean = n * p;
   const variance = n * p * (1 - p);
-  // Verifica se as condições para a aproximação são atendidas
-  const valid = mean >= 10 && n * (1 - p) >= 10;
-  if (!valid || variance === 0) return { value: 0, valid: false };
+  
+  // Sempre tenta calcular, mesmo quando inadequado (para fins educacionais)
+  // Condições mais permissivas: np >= 5 e n(1-p) >= 5 para "calculável"
+  // Condições restritivas: np >= 10 e n(1-p) >= 10 para "recomendado"
+  const canCalculate = mean >= 1 && n * (1 - p) >= 1; // Muito permissivo, só evita divisão por zero
+  const isAcceptable = mean >= 5 && n * (1 - p) >= 5;
+  const isRecommended = mean >= 10 && n * (1 - p) >= 10;
+  
+  if (!canCalculate || variance === 0) return { value: 0, valid: false, calculable: false };
 
   const stdDev = Math.sqrt(variance);
   // Correção de continuidade: z = (k + 0.5 - μ) / σ
   const z = (k + 0.5 - mean) / stdDev;
   const value = Math.max(0, normalTail(z));
-  return { value, valid };
+  
+  // Retorna sempre o valor calculado, mas indica qualidade da aproximação
+  return { value, valid: isRecommended, calculable: isAcceptable };
 };
 
 /**
@@ -227,7 +213,7 @@ export const calculateAllResults = (n: number, p: number, k: number): Calculatio
               : Math.abs(poisson - exact) * 100;
 
   const normalError =
-    normalResult.valid
+    normalResult.value > 0 // Se temos um resultado calculado
       ? (exact > 0 ? Math.abs((normalResult.value - exact) / exact) * 100
                    : Math.abs(normalResult.value - exact) * 100)
       : 0;
@@ -239,6 +225,7 @@ export const calculateAllResults = (n: number, p: number, k: number): Calculatio
     poissonError,
     normalError,
     normalValid: normalResult.valid,
+    normalCalculable: normalResult.calculable,
     mean: n * p,
     stdDev: Math.sqrt(n * p * (1 - p)),
   };

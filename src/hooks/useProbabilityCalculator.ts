@@ -27,6 +27,7 @@ export const useProbabilityCalculator = () => {
         poissonError: 0,
         normalError: 0,
         normalValid: false,
+        normalCalculable: false,
         mean: 0,
         stdDev: 0,
       };

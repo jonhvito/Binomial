@@ -3,6 +3,8 @@
  */
 
 import React from 'react';
+import { InlineMath, BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 
 export type ModalType = 'n' | 'p' | 'k' | 'binomial' | 'poisson' | 'normal' | 'history' | 'manual_calc' | 'faq';
 
@@ -74,11 +76,11 @@ export const getModalContent = (type: ModalType): React.ReactNode => {
           </p>
           <div className="bg-indigo-50 dark:bg-indigo-900/20 p-4 rounded-lg">
             <h4 className="font-semibold text-indigo-900 dark:text-indigo-100 mb-2">Fórmula:</h4>
-            <div className="text-center text-indigo-800 dark:text-indigo-200 font-mono">
-              P(X = k) = C(n,k) × p^k × (1-p)^(n-k)
+            <div className="text-center p-3 bg-white dark:bg-gray-800 rounded border">
+              <BlockMath math="P(X = k) = \binom{n}{k} p^k (1-p)^{n-k}" />
             </div>
             <p className="text-indigo-800 dark:text-indigo-200 mt-2">
-              Onde C(n,k) é o coeficiente binomial "n escolhe k"
+              Onde <InlineMath math="\binom{n}{k}" /> é o coeficiente binomial "n escolhe k"
             </p>
           </div>
           <p className="text-sm theme-text-secondary">
@@ -95,11 +97,11 @@ export const getModalContent = (type: ModalType): React.ReactNode => {
           </p>
           <div className="bg-teal-50 dark:bg-teal-900/20 p-4 rounded-lg">
             <h4 className="font-semibold text-teal-900 dark:text-teal-100 mb-2">Fórmula:</h4>
-            <div className="text-center text-teal-800 dark:text-teal-200 font-mono">
-              P(X = k) ≈ e^(-λ) × λ^k / k!
+            <div className="text-center p-3 bg-white dark:bg-gray-800 rounded border">
+              <BlockMath math="P(X = k) \approx \frac{e^{-\lambda} \lambda^k}{k!}" />
             </div>
             <p className="text-teal-800 dark:text-teal-200 mt-2">
-              Onde λ = n × p é o parâmetro da distribuição
+              Onde <InlineMath math="\lambda = n \times p" /> é o parâmetro da distribuição
             </p>
           </div>
           <p className="text-sm theme-text-secondary">
@@ -117,8 +119,8 @@ export const getModalContent = (type: ModalType): React.ReactNode => {
           <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg">
             <h4 className="font-semibold text-orange-900 dark:text-orange-100 mb-2">Parâmetros:</h4>
             <div className="text-orange-800 dark:text-orange-200">
-              <p>Média: μ = n × p</p>
-              <p>Desvio padrão: σ = √[n × p × (1-p)]</p>
+              <p>Média: <InlineMath math="\mu = n \times p" /></p>
+              <p>Desvio padrão: <InlineMath math="\sigma = \sqrt{n \times p \times (1-p)}" /></p>
             </div>
           </div>
           <p className="text-sm theme-text-secondary">
@@ -180,17 +182,17 @@ export const getModalContent = (type: ModalType): React.ReactNode => {
 
               <div className="space-y-2 text-sm">
                 <p><strong>Passo 1:</strong> Calcular coeficientes binomiais</p>
-                <p>C(5,3) = 5!/(3!×2!) = 10</p>
-                <p>C(5,4) = 5!/(4!×1!) = 5</p>
-                <p>C(5,5) = 5!/(5!×0!) = 1</p>
+                <p><InlineMath math="C(5,3) = \frac{5!}{3! \times 2!} = 10" /></p>
+                <p><InlineMath math="C(5,4) = \frac{5!}{4! \times 1!} = 5" /></p>
+                <p><InlineMath math="C(5,5) = \frac{5!}{5! \times 0!} = 1" /></p>
 
                 <p className="mt-3"><strong>Passo 2:</strong> Calcular probabilidades</p>
-                <p>P(X=3) = 10 × (0.3)^3 × (0.7)^2 = 10 × 0.027 × 0.49 = 0.1323</p>
-                <p>P(X=4) = 5 × (0.3)^4 × (0.7)^1 = 5 × 0.0081 × 0.7 = 0.02835</p>
-                <p>P(X=5) = 1 × (0.3)^5 × (0.7)^0 = 1 × 0.00243 × 1 = 0.00243</p>
+                <p><InlineMath math="P(X=3) = 10 \times (0.3)^3 \times (0.7)^2 = 10 \times 0.027 \times 0.49 = 0.1323" /></p>
+                <p><InlineMath math="P(X=4) = 5 \times (0.3)^4 \times (0.7)^1 = 5 \times 0.0081 \times 0.7 = 0.02835" /></p>
+                <p><InlineMath math="P(X=5) = 1 \times (0.3)^5 \times (0.7)^0 = 1 \times 0.00243 \times 1 = 0.00243" /></p>
 
                 <p className="mt-3"><strong>Passo 3:</strong> Somar probabilidades</p>
-                <p>P(X&gt;2) = 0.1323 + 0.02835 + 0.00243 = 0.16308</p>
+                <p><InlineMath math="P(X>2) = 0.1323 + 0.02835 + 0.00243 = 0.16308" /></p>
               </div>
             </div>
 
@@ -224,7 +226,7 @@ export const getModalContent = (type: ModalType): React.ReactNode => {
             <div className="border-l-4 border-green-500 pl-4">
               <h5 className="font-medium text-green-700 dark:text-green-300 mb-2">Quando usar a aproximação Poisson?</h5>
               <p className="text-green-600 dark:text-green-200 text-sm">
-                Quando n é grande e p é pequeno (λ = n×p &lt; 10). É útil para modelar eventos raros como
+                Quando n é grande e p é pequeno (<InlineMath math="\lambda = n \times p < 10" />). É útil para modelar eventos raros como
                 acidentes de trânsito ou defeitos em produção.
               </p>
             </div>
@@ -232,7 +234,7 @@ export const getModalContent = (type: ModalType): React.ReactNode => {
             <div className="border-l-4 border-orange-500 pl-4">
               <h5 className="font-medium text-orange-700 dark:text-orange-300 mb-2">Quando usar a aproximação Normal?</h5>
               <p className="text-orange-600 dark:text-orange-200 text-sm">
-                Quando n×p ≥ 10 e n×(1-p) ≥ 10. A distribuição binomial se aproxima da Normal quando
+                Quando <InlineMath math="n \times p \geq 10" /> e <InlineMath math="n \times (1-p) \geq 10" />. A distribuição binomial se aproxima da Normal quando
                 o número de tentativas é grande.
               </p>
             </div>
@@ -240,23 +242,66 @@ export const getModalContent = (type: ModalType): React.ReactNode => {
             <div className="border-l-4 border-purple-500 pl-4">
               <h5 className="font-medium text-purple-700 dark:text-purple-300 mb-2">O que significa P(X &gt; k)?</h5>
               <p className="text-purple-600 dark:text-purple-200 text-sm">
-                É a probabilidade de obter mais de k sucessos. Por exemplo, se k=5, calcula P(X=6) + P(X=7) + ... + P(X=n).
+                É a probabilidade de obter mais de k sucessos. Por exemplo, se k=5, calcula <InlineMath math="P(X=6) + P(X=7) + \ldots + P(X=n)" />.
               </p>
             </div>
 
             <div className="border-l-4 border-red-500 pl-4">
               <h5 className="font-medium text-red-700 dark:text-red-300 mb-2">Por que usar logaritmos nos cálculos?</h5>
-              <p className="text-red-600 dark:text-red-200 text-sm">
-                Para evitar overflow/underflow numérico. Probabilidades muito pequenas (como 10^-100)
-                causam problemas em computadores. Usamos log para trabalhar com números mais manejáveis.
-              </p>
+              <div className="text-red-600 dark:text-red-200 text-sm space-y-3">
+                <p>
+                  Quando temos <strong>valores grandes de n e pequenos de p</strong>, as probabilidades podem ser 
+                  <strong> extremamente pequenas</strong> (como <InlineMath math="10^{-100}" /> ou menores), causando 
+                  <strong> overflow/underflow numérico</strong> nos computadores.
+                </p>
+                
+                <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
+                  <p className="font-medium mb-2">🔍 Cenários Problemáticos:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li><strong>Controle de qualidade:</strong> n=10.000 peças, p=0.0001 (1 defeito em 10.000)</li>
+                    <li><strong>Eventos raros:</strong> n=1.000.000 pessoas, p=0.000001 (doença rara)</li>
+                    <li><strong>Sistemas confiáveis:</strong> n=100.000 componentes, p=0.00001 (falha)</li>
+                  </ul>
+                  <p className="mt-2 text-xs">
+                    💡 <strong>Resultado:</strong> <InlineMath math="P(X=0)" /> pode ser <InlineMath math="\approx 10^{-434}" />
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">
+                  <p className="font-medium mb-2">🧮 Solução Logarítmica:</p>
+                  <p>Em vez de calcular diretamente:</p>
+                  <p className="text-center my-2">
+                    <InlineMath math="P = \binom{n}{k} p^k (1-p)^{n-k}" />
+                  </p>
+                  <p>Usamos a propriedade: <InlineMath math="\log(a \times b) = \log a + \log b" /></p>
+                  <p className="text-center my-2">
+                    <InlineMath math="\log P = \log\binom{n}{k} + k\log p + (n-k)\log(1-p)" />
+                  </p>
+                  <p>Depois convertemos: <InlineMath math="P = e^{\log P}" /> (apenas no resultado final)</p>
+                </div>
+
+                <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg">
+                  <p className="font-medium mb-2">✅ Vantagens:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li><strong>Estabilidade:</strong> <InlineMath math="-1000" /> é manejável, <InlineMath math="10^{-1000}" /> não</li>
+                    <li><strong>Precisão:</strong> Mantém dígitos significativos</li>
+                    <li><strong>Eficiência:</strong> Multiplicações → Somas (mais rápido)</li>
+                    <li><strong>Robustez:</strong> Funciona para qualquer n e p</li>
+                  </ul>
+                </div>
+
+                <p>
+                  <strong>🎯 Na prática:</strong> Essa aplicação usa essa técnica automaticamente, 
+                  garantindo resultados precisos mesmo para distribuições com probabilidades microscópicas!
+                </p>
+              </div>
             </div>
 
             <div className="border-l-4 border-teal-500 pl-4">
               <h5 className="font-medium text-teal-700 dark:text-teal-300 mb-2">Qual a diferença entre média e variância?</h5>
               <p className="text-teal-600 dark:text-teal-200 text-sm">
-                Média (μ) = n×p indica o valor esperado. Variância (σ²) = n×p×(1-p) mede a dispersão.
-                Desvio padrão (σ) = √variância é mais fácil de interpretar.
+                Média <InlineMath math="(\mu) = n \times p" /> indica o valor esperado. Variância <InlineMath math="(\sigma^2) = n \times p \times (1-p)" /> mede a dispersão.
+                Desvio padrão <InlineMath math="(\sigma) = \sqrt{\text{variância}}" /> é mais fácil de interpretar.
               </p>
             </div>
           </div>

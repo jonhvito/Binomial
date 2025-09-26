@@ -114,9 +114,21 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-medium text-orange-900 dark:text-orange-100">Aproximação de Normal</span>
-                    {results.normalValid && (
+                    {results.normalValid ? (
                       <span className="px-2 py-1 text-xs bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-200 rounded-full font-medium">
-                        Recomendado
+                        ✓ Recomendado
+                      </span>
+                    ) : results.normalCalculable ? (
+                      <span className="px-2 py-1 text-xs bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-200 rounded-full font-medium">
+                        ⚡ Aceitável
+                      </span>
+                    ) : results.normal > 0 ? (
+                      <span className="px-2 py-1 text-xs bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-200 rounded-full font-medium">
+                        ⚠ Inadequado
+                      </span>
+                    ) : (
+                      <span className="px-2 py-1 text-xs bg-gray-100 dark:bg-gray-900/50 text-gray-700 dark:text-gray-200 rounded-full font-medium">
+                        N/A
                       </span>
                     )}
                     <button
@@ -130,20 +142,42 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                   <div className="text-sm text-orange-700 dark:text-orange-200">
                     μ = {results.mean.toFixed(2)}, σ = {results.stdDev.toFixed(2)}
                   </div>
-                  {!results.normalValid && (
+                  {!results.normalValid && results.normalCalculable && (
+                    <div className="text-sm text-yellow-600 dark:text-yellow-300 mt-1">
+                      <p>⚠ <strong>Aproximação aceitável mas não ideal.</strong></p>
+                      <p className="text-xs mt-1">
+                        Para melhor precisão, np e n(1-p) deveriam ser ≥ 10. Com seus valores atuais, 
+                        a curva Normal pode não aproximar perfeitamente a distribuição binomial.
+                      </p>
+                    </div>
+                  )}
+                  {!results.normalCalculable && results.normal > 0 && (
                     <div className="text-sm text-red-600 dark:text-red-300 mt-1">
-                      ⚠ A aproximação Normal não é recomendada porque as condições
-                      np ≥ 10 e n(1−p) ≥ 10 não são atendidas.
+                      <p>⚠ <strong>Aproximação inadequada - Use apenas para comparação educacional!</strong></p>
+                      <p className="text-xs mt-1">
+                        <strong>Por que não é adequado:</strong> Quando np ou n(1-p) são muito pequenos ({'<'}5), 
+                        a distribuição binomial é muito "pontuda" e assimétrica, mas a Normal é sempre simétrica 
+                        e suave. É como tentar aproximar uma escada com uma rampa - não funciona bem!
+                      </p>
+                      <p className="text-xs mt-1">
+                        <strong>O resultado abaixo pode estar muito incorreto.</strong> Use apenas para entender 
+                        por que essa aproximação falha neste caso.
+                      </p>
                     </div>
                   )}
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-orange-600 dark:text-orange-300">
-                    {results.normalValid ? results.normal.toFixed(4) : 'N/A'}
+                    {results.normal > 0 ? results.normal.toFixed(4) : 'N/A'}
                   </div>
-                  {results.normalValid && (
+                  {results.normal > 0 && (
                     <div className="text-sm text-orange-700 dark:text-orange-200">
                       Erro: {results.normalError.toFixed(1)}%
+                      {!results.normalCalculable && results.normal > 0 && (
+                        <span className="text-red-500 dark:text-red-400 block text-xs">
+                          (Muito impreciso!)
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>

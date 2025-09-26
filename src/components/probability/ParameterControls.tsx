@@ -32,7 +32,7 @@ const ParameterControls: React.FC<ParameterControlsProps> = ({
         {/* n parameter */}
         <div className="w-full">
           <label className="block text-sm font-medium theme-text-secondary mb-2 flex items-center gap-2 w-full">
-            <span className="flex-1">Número de tentativas (n): {n}</span>
+            <span>Número de tentativas (n): {n}</span>
             <button
               onClick={() => onOpenModal('n')}
               className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors touch-manipulation flex-shrink-0"
@@ -65,7 +65,7 @@ const ParameterControls: React.FC<ParameterControlsProps> = ({
         {/* p parameter */}
         <div className="w-full">
           <label className="block text-sm font-medium theme-text-secondary mb-2 flex items-center gap-2 w-full">
-            <span className="flex-1">Probabilidade de sucesso (p): {p.toFixed(3)}</span>
+            <span>Probabilidade de sucesso (p): {p.toFixed(3)}</span>
             <button
               onClick={() => onOpenModal('p')}
               className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors touch-manipulation flex-shrink-0"
@@ -100,7 +100,7 @@ const ParameterControls: React.FC<ParameterControlsProps> = ({
         {/* k parameter */}
         <div className="w-full">
           <label className="block text-sm font-medium theme-text-secondary mb-2 flex items-center gap-2 w-full">
-            <span className="flex-1">Limite superior (k): {k}</span>
+            <span>Limite superior (k): {k}</span>
             <button
               onClick={() => onOpenModal('k')}
               className="text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors touch-manipulation flex-shrink-0"

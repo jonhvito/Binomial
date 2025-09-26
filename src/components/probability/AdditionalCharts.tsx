@@ -46,12 +46,71 @@ const AdditionalCharts: React.FC<AdditionalChartsProps> = ({
 }) => {
   const [activeChart, setActiveChart] = useState<'comparison' | 'cumulative' | 'overlay'>('comparison');
   const [showExplanation, setShowExplanation] = useState(false);
+  const [separateOverlap, setSeparateOverlap] = useState(false);
+
+  // Função para detectar sobreposição das curvas
+  const detectOverlap = () => {
+    if (!validInput) return { 
+      hasOverlap: false, 
+      poissonOverlap: 0, 
+      normalOverlap: 0, 
+      maxDiffPoisson: 0, 
+      maxDiffNormal: 0 
+    };
+
+    const results = { 
+      hasOverlap: false,
+      poissonOverlap: 0,
+      normalOverlap: 0,
+      maxDiffPoisson: 0,
+      maxDiffNormal: 0
+    };
+
+    const range = Math.min(n + 1, 20); // Analisa os primeiros 20 pontos
+    
+    if (showPoisson && poissonData) {
+      let totalDiff = 0;
+      let maxDiff = 0;
+      
+      for (let i = 0; i < range; i++) {
+        const diff = Math.abs(binomialData[i] - poissonData[i]);
+        totalDiff += diff;
+        maxDiff = Math.max(maxDiff, diff);
+      }
+      
+      results.poissonOverlap = totalDiff / range;
+      results.maxDiffPoisson = maxDiff;
+    }
+
+    if (showNormal && normalData) {
+      let totalDiff = 0;
+      let maxDiff = 0;
+      
+      for (let i = 0; i < range; i++) {
+        const diff = Math.abs(binomialData[i] - normalData[i]);
+        totalDiff += diff;
+        maxDiff = Math.max(maxDiff, diff);
+      }
+      
+      results.normalOverlap = totalDiff / range;
+      results.maxDiffNormal = maxDiff;
+    }
+
+    // Define como sobreposição se a diferença média é muito pequena
+    results.hasOverlap = results.poissonOverlap < 0.001 || results.normalOverlap < 0.001;
+    
+    return results;
+  };
+
+  const overlapInfo = detectOverlap();
 
   // Preparar dados para o gráfico de comparação
   const getComparisonChartData = (): ChartData<'line'> | null => {
     if (!validInput) return null;
 
     const labels = Array.from({ length: Math.min(n + 1, 50) }, (_, i) => i.toString());
+    const hasOverlap = overlapInfo.hasOverlap;
+    
     const datasets = [
       {
         label: 'Binomial (Exato)',
@@ -59,32 +118,46 @@ const AdditionalCharts: React.FC<AdditionalChartsProps> = ({
         borderColor: 'rgb(59, 130, 246)',
         backgroundColor: 'rgba(59, 130, 246, 0.1)',
         fill: false,
-        pointRadius: 3,
-        pointHoverRadius: 5,
+        pointRadius: hasOverlap ? 4 : 3,
+        pointHoverRadius: 6,
+        borderWidth: hasOverlap ? 3 : 2,
+        tension: 0,
       },
     ];
 
     if (showPoisson && poissonData) {
+      const isPoissonClose = overlapInfo.poissonOverlap < 0.001;
+      const separationFactor = separateOverlap && isPoissonClose ? 1.05 : 1; // 5% de separação quando ativado
+      
       datasets.push({
-        label: 'Aproximação Poisson',
-        data: poissonData.slice(0, 50),
-        borderColor: 'rgb(34, 197, 94)',
+        label: `Aproximação Poisson ${isPoissonClose ? '(muito próxima!)' : ''}`,
+        data: poissonData.slice(0, 50).map(val => val * separationFactor),
+        borderColor: separateOverlap && isPoissonClose ? 'rgb(22, 163, 74)' : 'rgb(34, 197, 94)', // Cor diferente quando separado
         backgroundColor: 'rgba(34, 197, 94, 0.1)',
         fill: false,
-        pointRadius: 2,
-        pointHoverRadius: 4,
+        pointRadius: hasOverlap ? 3 : 2,
+        pointHoverRadius: 5,
+        borderWidth: isPoissonClose ? 3 : 2,
+        tension: 0,
+        ...(isPoissonClose && { borderDash: separateOverlap ? [15, 5] : [5, 5] }), // Padrão diferente quando separado
       });
     }
 
     if (showNormal && normalData) {
+      const isNormalClose = overlapInfo.normalOverlap < 0.001;
+      const separationFactor = separateOverlap && isNormalClose ? 0.95 : 1; // -5% de separação quando ativado
+      
       datasets.push({
-        label: 'Aproximação Normal',
-        data: normalData.slice(0, 50),
-        borderColor: 'rgb(168, 85, 247)',
+        label: `Aproximação Normal ${isNormalClose ? '(muito próxima!)' : ''}`,
+        data: normalData.slice(0, 50).map(val => val * separationFactor),
+        borderColor: separateOverlap && isNormalClose ? 'rgb(147, 51, 234)' : 'rgb(168, 85, 247)', // Cor diferente quando separado
         backgroundColor: 'rgba(168, 85, 247, 0.1)',
         fill: false,
-        pointRadius: 2,
-        pointHoverRadius: 4,
+        pointRadius: hasOverlap ? 3 : 2,
+        pointHoverRadius: 5,
+        borderWidth: isNormalClose ? 3 : 2,
+        tension: 0,
+        ...(isNormalClose && { borderDash: separateOverlap ? [20, 10] : [10, 3] }), // Padrão diferente quando separado
       });
     }
 
@@ -235,7 +308,83 @@ const AdditionalCharts: React.FC<AdditionalChartsProps> = ({
           <PieChart className="w-4 h-4" />
           Acumulada
         </button>
+
+        {/* Botão para separar curvas sobrepostas */}
+        {overlapInfo.hasOverlap && activeChart === 'comparison' && (
+          <button
+            onClick={() => setSeparateOverlap(!separateOverlap)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              separateOverlap
+                ? 'bg-orange-100 dark:bg-orange-900/50 text-orange-700 dark:text-orange-300 border border-orange-300 dark:border-orange-600'
+                : 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-200 dark:hover:bg-yellow-800/50'
+            }`}
+            title="As curvas estão muito próximas. Clique para separá-las visualmente."
+          >
+            <Eye className="w-4 h-4" />
+            {separateOverlap ? 'Juntar Curvas' : 'Separar Curvas'}
+          </button>
+        )}
       </div>
+
+      {/* Painel de Análise de Sobreposição */}
+      {overlapInfo.hasOverlap && activeChart === 'comparison' && (showPoisson || showNormal) && (
+        <div className="mb-4 p-4 bg-amber-50 dark:bg-amber-900/20 border-l-4 border-amber-400 dark:border-amber-500 rounded-r-lg">
+          <div className="flex items-start gap-2">
+            <div className="w-5 h-5 bg-amber-100 dark:bg-amber-800 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+              <Eye className="w-3 h-3 text-amber-600 dark:text-amber-300" />
+            </div>
+            <div className="flex-1">
+              <h4 className="font-semibold text-amber-900 dark:text-amber-100 mb-2">
+                📊 Curvas Muito Próximas Detectadas
+              </h4>
+              <p className="text-sm text-amber-800 dark:text-amber-200 mb-3">
+                As aproximações estão excelentes! As curvas se sobrepõem quase perfeitamente.
+              </p>
+              
+              <div className="grid md:grid-cols-2 gap-3 text-xs">
+                {showPoisson && overlapInfo.poissonOverlap < 0.001 && (
+                  <div className="bg-white dark:bg-gray-800 p-2 rounded border">
+                    <p className="font-medium text-green-700 dark:text-green-300">
+                      ✅ Aproximação Poisson
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Diferença média: {(overlapInfo.poissonOverlap * 100).toExponential(2)}%
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Máx diferença: {(overlapInfo.maxDiffPoisson * 100).toFixed(4)}%
+                    </p>
+                  </div>
+                )}
+                
+                {showNormal && overlapInfo.normalOverlap < 0.001 && (
+                  <div className="bg-white dark:bg-gray-800 p-2 rounded border">
+                    <p className="font-medium text-purple-700 dark:text-purple-300">
+                      ✅ Aproximação Normal
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Diferença média: {(overlapInfo.normalOverlap * 100).toExponential(2)}%
+                    </p>
+                    <p className="text-gray-600 dark:text-gray-400">
+                      Máx diferença: {(overlapInfo.maxDiffNormal * 100).toFixed(4)}%
+                    </p>
+                  </div>
+                )}
+              </div>
+              
+              <div className="mt-3 text-xs text-amber-700 dark:text-amber-300">
+                💡 <strong>Dica:</strong> Para melhor visualização, use linhas tracejadas e formas diferentes nos pontos.
+                {separateOverlap ? (
+                  <span className="block mt-1 font-medium text-orange-700 dark:text-orange-300">
+                    🔧 <strong>Separação Ativa:</strong> Curvas deslocadas ±5% para melhor visibilidade!
+                  </span>
+                ) : (
+                  " Clique em 'Separar Curvas' para um pequeno deslocamento visual."
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {showExplanation && (
         <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
@@ -250,9 +399,14 @@ const AdditionalCharts: React.FC<AdditionalChartsProps> = ({
               "até" um valor específico.
             </div>
             <ul className="mt-2 text-xs space-y-1 pl-4">
-              <li>• <strong>Linha sólida:</strong> Distribuição Binomial (exata)</li>
-              <li>• <strong>Linha tracejada:</strong> Aproximação Poisson</li>
-              <li>• <strong>Linha pontilhada:</strong> Aproximação Normal</li>
+              <li>• <strong>Linha sólida azul:</strong> Distribuição Binomial (exata)</li>
+              <li>• <strong>Linha tracejada verde:</strong> Aproximação Poisson {separateOverlap && overlapInfo.poissonOverlap < 0.001 ? '(+5% quando separada)' : ''}</li>
+              <li>• <strong>Linha tracejada roxa:</strong> Aproximação Normal {separateOverlap && overlapInfo.normalOverlap < 0.001 ? '(-5% quando separada)' : ''}</li>
+              {separateOverlap && overlapInfo.hasOverlap && (
+                <li className="text-orange-600 dark:text-orange-400">
+                  • <strong>Separação visual ativa:</strong> Curvas próximas foram deslocadas para melhor visualização
+                </li>
+              )}
             </ul>
           </div>
         </div>

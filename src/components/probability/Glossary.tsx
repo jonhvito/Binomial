@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Book, Search, ExternalLink, ChevronDown, ChevronRight } from 'lucide-react';
+import { BlockMath } from 'react-katex';
+import 'katex/dist/katex.min.css';
 
 interface GlossaryTerm {
   id: string;
@@ -26,7 +28,7 @@ const Glossary: React.FC<GlossaryProps> = ({ isOpen, onClose }) => {
       id: 'binomial',
       term: 'Distribuição Binomial',
       definition: 'Distribuição de probabilidade discreta que modela o número de sucessos em n tentativas independentes, cada uma com probabilidade p de sucesso.',
-      formula: 'P(X = k) = C(n,k) × p^k × (1-p)^(n-k)',
+      formula: 'P(X = k) = \\binom{n}{k} p^k (1-p)^{n-k}',
       example: 'Lançar uma moeda 10 vezes e contar o número de caras.',
       references: [
         'Ross, S. Introduction to Probability Models (2014)',
@@ -38,7 +40,7 @@ const Glossary: React.FC<GlossaryProps> = ({ isOpen, onClose }) => {
       id: 'bernoulli',
       term: 'Distribuição de Bernoulli',
       definition: 'Caso especial da distribuição binomial com n = 1. Modelo uma única tentativa com dois resultados possíveis.',
-      formula: 'P(X = 1) = p, P(X = 0) = 1-p',
+      formula: 'P(X = 1) = p, \\quad P(X = 0) = 1-p',
       example: 'Resultado de um único lançamento de moeda.',
       relatedTerms: ['binomial']
     },
@@ -46,7 +48,7 @@ const Glossary: React.FC<GlossaryProps> = ({ isOpen, onClose }) => {
       id: 'combinacao',
       term: 'Combinação C(n,k)',
       definition: 'Número de maneiras de escolher k objetos de um conjunto de n objetos, onde a ordem não importa.',
-      formula: 'C(n,k) = n! / (k!(n-k)!)',
+      formula: '\\binom{n}{k} = \\frac{n!}{k!(n-k)!}',
       example: 'C(5,2) = 10 maneiras de escolher 2 cartas de um baralho de 5.',
       relatedTerms: ['binomial', 'fatorial']
     },
@@ -54,23 +56,23 @@ const Glossary: React.FC<GlossaryProps> = ({ isOpen, onClose }) => {
       id: 'poisson',
       term: 'Aproximação de Poisson',
       definition: 'Aproximação da distribuição binomial quando n é grande e p é pequeno (np ≈ λ constante).',
-      formula: 'P(X = k) ≈ (λ^k × e^(-λ)) / k!, onde λ = np',
+      formula: 'P(X = k) \\approx \\frac{\\lambda^k e^{-\\lambda}}{k!}, \\text{ onde } \\lambda = np',
       example: 'Aproximar Binomial(100, 0.02) por Poisson(2)',
       references: [
         'Devore, J. Probability and Statistics for Engineering and Sciences (2016)'
       ],
-      relatedTerms: ['binomial', 'aproximacao']
+      relatedTerms: ['binomial', 'aproximação']
     },
     {
       id: 'normal',
       term: 'Aproximação Normal',
       definition: 'Aproximação da distribuição binomial quando n é grande usando o Teorema Central do Limite.',
-      formula: 'X ~ N(μ, σ²), onde μ = np e σ² = np(1-p)',
+      formula: 'X \\sim N(\\mu, \\sigma^2), \\text{ onde } \\mu = np \\text{ e } \\sigma^2 = np(1-p)',
       example: 'Aproximar Binomial(100, 0.5) por Normal(50, 25)',
       references: [
         'Walpole, R. Probability and Statistics for Engineers and Scientists (2016)'
       ],
-      relatedTerms: ['binomial', 'aproximacao', 'teorema-central']
+      relatedTerms: ['binomial', 'aproximação', 'teorema-central']
     },
     {
       id: 'tentativas',
@@ -83,7 +85,7 @@ const Glossary: React.FC<GlossaryProps> = ({ isOpen, onClose }) => {
       id: 'esperanca',
       term: 'Valor Esperado (Esperança)',
       definition: 'Média teórica de uma distribuição de probabilidade.',
-      formula: 'Para Binomial: E[X] = np',
+      formula: '\\text{Para Binomial: } E[X] = np',
       example: 'Para Binomial(10, 0.3), E[X] = 3',
       relatedTerms: ['variancia', 'binomial']
     },
@@ -91,7 +93,7 @@ const Glossary: React.FC<GlossaryProps> = ({ isOpen, onClose }) => {
       id: 'variancia',
       term: 'Variância',
       definition: 'Medida de dispersão dos valores em torno da média.',
-      formula: 'Para Binomial: Var(X) = np(1-p)',
+      formula: '\\text{Para Binomial: } \\text{Var}(X) = np(1-p)',
       example: 'Para Binomial(10, 0.3), Var(X) = 2.1',
       relatedTerms: ['esperanca', 'desvio-padrao', 'binomial']
     }
@@ -100,7 +102,7 @@ const Glossary: React.FC<GlossaryProps> = ({ isOpen, onClose }) => {
   const categories = [
     { id: 'todos', name: 'Todos os Termos', count: glossaryTerms.length },
     { id: 'distribuicoes', name: 'Distribuições', count: 4 },
-    { id: 'aproximacoes', name: 'Aproximações', count: 2 },
+    { id: 'aproximações', name: 'Aproximações', count: 2 },
     { id: 'conceitos', name: 'Conceitos Básicos', count: 4 }
   ];
 
@@ -112,7 +114,7 @@ const Glossary: React.FC<GlossaryProps> = ({ isOpen, onClose }) => {
     
     const categoryTerms = {
       'distribuicoes': ['binomial', 'bernoulli', 'poisson', 'normal'],
-      'aproximacoes': ['poisson', 'normal'],
+      'aproximações': ['poisson', 'normal'],
       'conceitos': ['combinacao', 'tentativas', 'esperanca', 'variancia']
     };
     
@@ -256,8 +258,8 @@ const Glossary: React.FC<GlossaryProps> = ({ isOpen, onClose }) => {
                           {term.formula && (
                             <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
                               <p className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-2">📐 Fórmula:</p>
-                              <div className="font-mono text-blue-800 dark:text-blue-200 theme-card p-2 rounded border">
-                                {term.formula}
+                              <div className="theme-card p-3 rounded border flex justify-center">
+                                <BlockMath math={term.formula} />
                               </div>
                             </div>
                           )}
