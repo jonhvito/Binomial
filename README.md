@@ -10,7 +10,7 @@ Uma aplicação web educacional para cálculo de probabilidades binomiais, desen
 
 ## Demonstração Online
 
-**Acesse:** [https://jonhvito.github.io/Binomial/](https://jonhvito.github.io/Binomial/)
+**Acesse:** [https://jonhvito2.github.io/Binomial-2/](https://jonhvito2.github.io/Binomial-2/)
 
 ## Capturas de Tela
 
@@ -335,8 +335,8 @@ Este projeto está licenciado sob a licença MIT. Consulte o arquivo LICENSE par
 
 Para dúvidas, sugestões ou problemas relacionados ao projeto:
 
-- **GitHub Issues**: [Reportar problemas](https://github.com/jonhvito/Binomial/issues)
-- **GitHub Discussions**: [Discussões gerais](https://github.com/jonhvito/Binomial/discussions)
+- **GitHub Issues**: [Reportar problemas](https://github.com/jonhvito2/Binomial-2/issues)
+- **GitHub Discussions**: [Discussões gerais](https://github.com/jonhvito2/Binomial-2/discussions)
 
 - **Email**: victorjoao8817@gmail.com
 
